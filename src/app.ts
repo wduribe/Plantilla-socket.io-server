@@ -1,28 +1,31 @@
 import { createServer } from 'http';
 import { Server } from './presentation/server';
 import { SocketService } from './presentation/services/socketService';
+import { envsAdapter } from './config';
+import { AppRoutes } from './presentation/routes';
 
 
 
 (() => {
-    main();
+	main();
 })();
 
+function main() {
 
-function main(){
-    
-    const server = new Server({
-        port: 3000,
-    });
+	const server = new Server({
+		port: envsAdapter.PORT, 
+	});
 
-    const httpServer = createServer( server.app );
+	const httpServer = createServer( server.app );
 
-    SocketService.initSocket({
-        server: httpServer,
-    });
+	SocketService.initSocket({
+		server: httpServer,
+	});
 
-    httpServer.listen( 3000, () => {
-        console.log( `Server is running on port: ${ 3000 }` );
-    });
+	server.setRoutes( AppRoutes.routes );
+
+	httpServer.listen( envsAdapter.PORT, () => {
+		console.log(`Server is running on port: ${ envsAdapter.PORT }`);
+	});
 
 }

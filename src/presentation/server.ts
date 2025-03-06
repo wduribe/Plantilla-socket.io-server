@@ -3,54 +3,54 @@ import cors from 'cors';
 import path from 'path';
 
 interface Options {
-    port: number,
-    publicPath?: string,
+	port: number,
+	publicPath?: string,
 }
 
 export class Server {
 
-    public readonly app = express();
-    private readonly port: number;
-    private readonly publicPath: string;
+	public readonly app = express();
+	private readonly port: number;
+	private readonly publicPath: string;
 
-    constructor( options: Options ){
+	constructor(options: Options) {
 
-        const { port, publicPath = 'public' } = options;
-        this.port = port;
-        this.publicPath = publicPath;
+		const { port, publicPath = 'public' } = options;
+		this.port = port;
+		this.publicPath = publicPath;
 
-        this.configure();
+		this.configure();
 
-    }
+	}
 
-    setRoutes( router: Router ){
-        this.app.use( router );
-    }
+	setRoutes(router: Router) {
+		this.app.use(router);
+	}
 
-    private configure(){
+	private configure() {
 
-        //* Middlewares
-        this.app.use( express.json() );
-        this.app.use( express.urlencoded( { extended: true } ));
+		//* Middlewares
+		this.app.use(express.json());
+		this.app.use(express.urlencoded({ extended: true }));
 
-        //*Public folder
-        this.app.use( express.static( this.publicPath ) );
+		//*Public folder
+		this.app.use(express.static(this.publicPath));
 
-        //*Configuration cors
-        this.app.use( cors() );
+		//*Configuration cors
+		this.app.use(cors());
 
-        //* SPA /^\/(?!api).*/  <== Únicamente si no empieza con la palabra api
-        this.app.get(/^\/(?!api).*/, (req, res) => {
-            const indexPath = path.join(__dirname + `../../../${this.publicPath}/index.html`);
-            res.sendFile(indexPath);
-        });
+		//* SPA /^\/(?!api).*/  <== Únicamente si no empieza con la palabra api
+		this.app.get(/^\/(?!api).*/, (req, res) => {
+			const indexPath = path.join(__dirname + `../../../${this.publicPath}/index.html`);
+			res.sendFile(indexPath);
+		});
 
-    }
+	}
 
-    start(){
-        this.app.listen( this.port, () => {
-            console.log( `Server is running on port: ${ this.port }` );
-        });
-    }
+	start() {
+		this.app.listen(this.port, () => {
+			console.log(`Server is running on port: ${this.port}`);
+		});
+	}
 
 }

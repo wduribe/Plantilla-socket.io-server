@@ -3,51 +3,48 @@ import { Server as ServerSocket } from 'socket.io';
 
 
 interface Options {
-    server: Server;
+	server: Server;
 }
 
 export class SocketService {
 
-    private static _instance: SocketService;
-    private io: ServerSocket;
+	private static _instance: SocketService;
+	private io: ServerSocket;
 
-    private constructor( options: Options ){
-        const { server } = options;
+	private constructor(options: Options) {
+		const { server } = options;
 
-        this.io = new ServerSocket( server );
+		this.io = new ServerSocket(server);
+		this.start();
 
-        //*Start socket server
-        this.start();
+	}
 
-    }
+	static get instance(): SocketService {
 
-    static get instance(): SocketService {
-        if( !SocketService._instance ){
-            throw 'Socket.io is not initializated';
-        }
+		if (!SocketService._instance) {
+			throw 'Socket.io is not initializated';
+		}
 
-        return SocketService._instance;
-    }
+		return SocketService._instance;
+	}
 
-    static initSocket( options: Options ){
-        const { server } = options;
-        SocketService._instance = new SocketService( { server } );
-    }
+	static initSocket(options: Options) {
+		const { server } = options;
+		SocketService._instance = new SocketService({ server });
+	}
 
-    public start(){
-        this.io.on( 'connection', ( socket ) =>{
-            console.log( 'Client connected' );  
-        
-            //* Primer mensaje que se envia al cliente cuando se conecta por primera vez
-            // socket.emit( 'mensaje-bienvenida', 'Bienvendio a Interrapidisimo' );
+	public sendMessage(type: string, payload: Object) {
+		this.io.emit(type, payload);
+	}
 
-            //* Escuchando los eventos de los clientes
-            // socket.on('payload del mensaje', (data) => {
+	public start() {
 
-            //     this.io.emit('message-from-server', data); --> Emite el mensaje a todos los usuarios
-            // });
-        });
+		this.io.on('connection', () => {
 
-    }
+			console.log('Client connected');
+
+		});
+
+	}
 
 }
